@@ -59,3 +59,15 @@ func TestSet(t *testing.T) {
 	assert.Equal(t, int64(2), client.SCard(ctx, "fruits").Val())
 	assert.Equal(t, []string{"Pen", "Apple"}, client.SMembers(ctx, "fruits").Val())
 }
+
+func TestSortedSet(t *testing.T) {
+	client.ZAdd(ctx, "scores", redis.Z{Score: 100, Member: "Muhammad"})
+	client.ZAdd(ctx, "scores", redis.Z{Score: 85, Member: "Amien"})
+	client.ZAdd(ctx, "scores", redis.Z{Score: 96, Member: "Rauf"})
+
+	assert.Equal(t, []string{"Amien", "Rauf", "Muhammad"}, client.ZRange(ctx, "scores", 0, 2).Val())
+	assert.Equal(t, "Muhammad", client.ZPopMax(ctx, "scores").Val()[0].Member)
+	assert.Equal(t, "Rauf", client.ZPopMax(ctx, "scores").Val()[0].Member)
+	assert.Equal(t, "Amien", client.ZPopMax(ctx, "scores").Val()[0].Member)
+
+}
