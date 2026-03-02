@@ -145,3 +145,16 @@ func TestTransaction(t *testing.T) {
 	assert.Equal(t, "Joko", client.Get(ctx, "name").Val())
 	assert.Equal(t, "Cirebon", client.Get(ctx, "address").Val())
 }
+
+func TestPublishStream(t *testing.T) {
+	for i := 0; i < 10; i++ {
+		err := client.XAdd(ctx, &redis.XAddArgs{
+			Stream: "members",
+			Values: map[string]interface{}{
+				"name":    "Eko",
+				"address": "Indonesia",
+			},
+		}).Err()
+		assert.Nil(t, err)
+	}
+}
