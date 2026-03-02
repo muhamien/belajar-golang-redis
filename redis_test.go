@@ -87,3 +87,28 @@ func TestHash(t *testing.T) {
 
 	client.Del(ctx, "user:1")
 }
+
+func TestGeoPoint(t *testing.T) {
+	client.GeoAdd(ctx, "sellers", &redis.GeoLocation{
+		Name:      "Toko A",
+		Longitude: 110.408456,
+		Latitude:  -7.739936,
+	})
+	client.GeoAdd(ctx, "sellers", &redis.GeoLocation{
+		Name:      "Toko B",
+		Longitude: 110.4144109,
+		Latitude:  -7.7420133,
+	})
+
+	distance := client.GeoDist(ctx, "sellers", "Toko A", "Toko B", "km").Val()
+	assert.Equal(t, 0.6963, distance)
+
+	sellers := client.GeoSearch(ctx, "sellers", &redis.GeoSearchQuery{
+		Longitude:  110.410960,
+		Latitude:   -7.740996,
+		Radius:     15,
+		RadiusUnit: "km",
+	}).Val()
+
+	assert.Equal(t, []string{"Toko A", "Toko B"}, sellers)
+}
