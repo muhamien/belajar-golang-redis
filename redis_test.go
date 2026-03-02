@@ -36,3 +36,15 @@ func TestString(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, "Muhammad Amien", result)
 }
+
+func TestList(t *testing.T) {
+	client.RPush(ctx, "names", "Muhammad")
+	client.RPush(ctx, "names", "Amien")
+	client.RPush(ctx, "names", "Rauf")
+
+	assert.Equal(t, "Muhammad", client.LPop(ctx, "names").Val())
+	assert.Equal(t, "Amien", client.LPop(ctx, "names").Val())
+	assert.Equal(t, "Rauf", client.LPop(ctx, "names").Val())
+
+	client.Del(ctx, "name")
+}
